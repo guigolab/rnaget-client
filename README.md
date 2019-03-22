@@ -1,3 +1,5 @@
+<img src="https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg" alt="GA4GH Logo" width="50%"/>
+
 # GA4GH rnaget API demo client
 
 This is a demo client implementation for the GA4GH rnaget API. Please have a look at [this](https://github.com/ga4gh-rnaseq/schema/blob/master/TESTING.md) document for more information. The implementation consists in a command line application written in Go and covers the basic functionalities of the API.
