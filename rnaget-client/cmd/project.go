@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"encoding/json"
+
 	"github.com/guigolab/rnaget-client/client/projects"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -47,6 +50,10 @@ func projectSearch(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		params.SetTags(tagSlice)
+	}
+	if log.IsLevelEnabled(log.DebugLevel) {
+		p, _ := json.MarshalIndent(params, "", "  ")
+		log.Debugf("\n%s", p)
 	}
 	result, err := Client.Projects.SearchProjects(params, AuthInfo)
 	if err != nil {
