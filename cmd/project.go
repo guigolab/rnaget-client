@@ -9,22 +9,22 @@ import (
 )
 
 var (
-	studyCmd = &cobra.Command{
-		Use:   "studies [id]",
-		Short: "Query studies",
-		Long:  `Query studies.`,
+	projectCmd = &cobra.Command{
+		Use:   "projects [id]",
+		Short: "Query projects",
+		Long:  `Query projects.`,
 		Args:  cobra.MaximumNArgs(1),
-		RunE:  getStudies,
+		RunE:  getProjects,
 	}
 )
 
 func init() {
-	setupStudyCommand()
-	rootCmd.AddCommand(studyCmd)
+	setupProjectCommand()
+	rootCmd.AddCommand(projectCmd)
 }
 
-func getStudyByID(id string) error {
-	resp, err := Client.GetStudyByIdWithResponse(Ctx, id)
+func getProjectByID(id string) error {
+	resp, err := Client.GetProjectByIdWithResponse(Ctx, id)
 	if err != nil {
 		return err
 	}
@@ -49,11 +49,11 @@ func getStudyByID(id string) error {
 	return nil
 }
 
-func getStudies(cmd *cobra.Command, args []string) error {
+func getProjects(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
-		return getStudyByID(args[0])
+		return getProjectByID(args[0])
 	}
-	params := api.GetStudiesParams{}
+	params := api.GetProjectsParams{}
 	ver := cmd.Flag("version")
 	if ver.Changed {
 		verString, err := cmd.Flags().GetString("version")
@@ -70,7 +70,7 @@ func getStudies(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
-	resp, err := Client.GetStudiesWithResponse(Ctx, &params)
+	resp, err := Client.GetProjectsWithResponse(Ctx, &params)
 	if err != nil {
 		return err
 	}
@@ -92,8 +92,8 @@ func getStudies(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func getStudyFilters(cmd *cobra.Command, args []string) error {
-	resp, err := Client.GetStudyFiltersWithResponse(Ctx)
+func getProjectFilters(cmd *cobra.Command, args []string) error {
+	resp, err := Client.GetProjectFiltersWithResponse(Ctx)
 	if err != nil {
 		return err
 	}
@@ -108,13 +108,13 @@ func getStudyFilters(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func setupStudyCommand() {
+func setupProjectCommand() {
 	var filtersCmd = &cobra.Command{
 		Use:   "filters",
-		Short: "Get filters for study searches",
-		Long:  `Get filters for study searches`,
-		RunE:  getStudyFilters,
+		Short: "Get filters for project searches",
+		Long:  `Get filters for project searches`,
+		RunE:  getProjectFilters,
 	}
-	studyCmd.Flags().StringP("version", "v", "", "Search for a specific version (ignored when [id] is specified)")
-	studyCmd.AddCommand(filtersCmd)
+	projectCmd.Flags().StringP("version", "v", "", "Search for a specific version (ignored when [id] is specified)")
+	projectCmd.AddCommand(filtersCmd)
 }

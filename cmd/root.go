@@ -32,8 +32,6 @@ var (
 		PersistentPreRun: getConfig,
 		SilenceUsage:     true,
 		SilenceErrors:    true,
-		Run: func(cmd *cobra.Command, args []string) {
-		},
 	}
 )
 
