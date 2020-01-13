@@ -1,0 +1,6 @@
+servers:
+    crg:
+        baseUrl: https://genome.crg.cat/rnaget
+        token: abcdefuvwxyz
+    caltech:
+        baseUrl: https://felcat.caltech.edu/rnaget
