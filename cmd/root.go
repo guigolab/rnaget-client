@@ -17,7 +17,8 @@ import (
 
 const (
 	// DefaultLocation is the default location
-	DefaultLocation = "crg"
+	DefaultLocation  = "crg"
+	DefaultConfigURL = "https://raw.githubusercontent.com/guigolab/rnaget-client/master/.rnaget-client.yml"
 )
 
 var (
@@ -46,15 +47,20 @@ func init() {
 }
 
 func initViper() {
-	viper.SetConfigName("client-config")
+	viper.SetConfigName(".rnaget-client")
 	viper.AddConfigPath(".")
 
 	viper.SetEnvPrefix("rnaget")
 	viper.AutomaticEnv()
 
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
-		log.Fatal(err)
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			if err = getDefaultConfig(); err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -70,6 +76,20 @@ func setRequestEditor(c *api.Client) error {
 		return nil
 	}
 	return nil
+}
+
+func getDefaultConfig() error {
+	viper.SetConfigType("yaml")
+
+	// Get the default config data
+	resp, err := http.Get(DefaultConfigURL)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	log.Debug("Read remote config from ", DefaultConfigURL)
+
+	return viper.ReadConfig(resp.Body)
 }
 
 func getConfig(*cobra.Command, []string) {
