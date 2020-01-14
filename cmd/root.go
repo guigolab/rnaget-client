@@ -39,6 +39,7 @@ var (
 func init() {
 	cobra.OnInitialize(initViper)
 	rootCmd.PersistentFlags().StringP("location", "l", "", "Server location")
+	rootCmd.PersistentFlags().CountP("verbose", "V", "Verbosity")
 	err := viper.BindPFlag("location", rootCmd.PersistentFlags().Lookup("location"))
 	if err != nil {
 		log.Fatal(err)
@@ -92,18 +93,23 @@ func getDefaultConfig() error {
 	return viper.ReadConfig(resp.Body)
 }
 
-func getConfig(*cobra.Command, []string) {
+func getConfig(cmd *cobra.Command, args []string) {
+	var err error
+	v, err := cmd.Flags().GetCount("verbose")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetLevel(log.WarnLevel + log.Level(v))
+
 	l := viper.GetString("location")
 	server := viper.Sub(fmt.Sprintf("servers.%s", l))
 	if server == nil {
 		log.Fatalf("Server location not found: %s", l)
 	}
-	var err error
 	Client, err = api.NewClientWithResponses(server.GetString("baseUrl"), setRequestEditor)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
