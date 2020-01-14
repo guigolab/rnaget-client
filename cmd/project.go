@@ -31,19 +31,19 @@ func getProjectByID(id string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	}
 
 	return nil
@@ -78,16 +78,16 @@ func getProjects(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		print(payload, len(*payload), resp.HTTPResponse)
+		printJSON(payload, len(*payload), resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	}
 	return nil
 }
@@ -100,10 +100,10 @@ func getProjectFilters(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		print(payload, 1, resp.HTTPResponse)
+		printJSON(payload, 1, resp.HTTPResponse)
 	}
 	return nil
 }

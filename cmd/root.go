@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"bufio"
 	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 
@@ -25,6 +28,12 @@ var (
 	// Client is a shared GA4GHRnaget instance
 	Client      *api.ClientWithResponses
 	Ctx, Cancel = context.WithCancel(context.Background())
+
+	terms = map[string]string{
+		"study":   "studies",
+		"project": "projects",
+		"matrix":  "matrices",
+	}
 
 	rootCmd = &cobra.Command{
 		Use:              "rnaget-client",
@@ -116,18 +125,59 @@ func getConfig(cmd *cobra.Command, args []string) {
 	http.DefaultClient.Transport = tr
 }
 
-func print(obj interface{}, l int, resp *http.Response) error {
-	r, err := json.MarshalIndent(obj, "", "  ")
+func printBytes(payload []byte, l int, f *os.File, resp *http.Response) error {
+	defer f.Close()
+	contentType := strings.Split(resp.Header.Get("content-type"), ";")[0]
+
+	fmt.Fprintln(os.Stderr, "         Host :", resp.Request.URL.Host)
+	fmt.Fprintln(os.Stderr, "       Status :", resp.Status)
+	fmt.Fprintln(os.Stderr, " Content-Type :", contentType)
+
+	fo, _ := f.Stat()
+	namedPipe := (fo.Mode() & os.ModeNamedPipe) == 0
+	pipe := (fo.Mode() & os.ModeCharDevice) == 0
+	redir := namedPipe && pipe
+	var w io.Writer = f
+	if redir {
+		log.Debug("Using buffered writer")
+		w = bufio.NewWriter(f)
+	}
+	switch contentType {
+	case "text/tab-separated-values":
+		if !redir {
+			fmt.Fprintln(os.Stderr, "      Payload : ")
+		}
+		fmt.Fprintf(w, "%s\n", payload)
+	case "application/vnd.loom":
+		if !redir {
+			log.Warn(`Writing loom file content to stdout might mess up your terminal screen. Please redirect stdout to a file or specify an output file by using the '--output|-o' flag instead.`)
+		} else {
+			fmt.Fprintf(w, "%s\n", payload)
+		}
+	}
+	t := "matrix"
+	if l != 1 {
+		t = terms[t]
+	}
+	log.Infof("Got %d %s", l, t)
+	return nil
+}
+
+func printJSON(obj interface{}, l int, resp *http.Response) error {
+	fmt.Fprintln(os.Stderr, "   Host :", resp.Request.URL.Host)
+	fmt.Fprintln(os.Stderr, " Status :", resp.Status)
+	fmt.Fprintln(os.Stderr, "Payload :")
+	payload, err := json.MarshalIndent(obj, "", "  ")
 	if err != nil {
 		return err
 	}
-	fmt.Println("   Host :", resp.Request.URL.Host)
-	fmt.Println(" Status :", resp.Status)
-	fmt.Println("Payload :")
-	fmt.Printf("%s\n", r)
-	re := regexp.MustCompile(`(\[\])?\*models.`)
+	fmt.Printf("%s\n", payload)
+	re := regexp.MustCompile(`(\[\])?\*(\[\])?api.`)
 	t := strings.ToLower(re.ReplaceAllString(fmt.Sprintf("%T", obj), ""))
-	log.Debugf("Got %d %s(s) \n", l, t)
+	if l != 1 {
+		t = terms[t]
+	}
+	log.Infof("Got %d %s\n", l, t)
 	return nil
 }
 
