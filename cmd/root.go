@@ -19,8 +19,6 @@ import (
 )
 
 const (
-	// DefaultLocation is the default location
-	DefaultLocation  = "crg"
 	DefaultConfigURL = "https://raw.githubusercontent.com/guigolab/rnaget-client/master/.rnaget-client.yml"
 )
 
@@ -46,14 +44,13 @@ var (
 )
 
 func init() {
-	cobra.OnInitialize(initViper)
-	rootCmd.PersistentFlags().StringP("location", "l", "", "Server location")
+	initViper()
+	rootCmd.PersistentFlags().StringP("location", "l", viper.GetString("location"), "Server location")
 	rootCmd.PersistentFlags().CountP("verbose", "V", "Verbosity")
 	err := viper.BindPFlag("location", rootCmd.PersistentFlags().Lookup("location"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	viper.SetDefault("location", DefaultLocation)
 }
 
 func initViper() {
@@ -111,9 +108,12 @@ func getConfig(cmd *cobra.Command, args []string) {
 	log.SetLevel(log.WarnLevel + log.Level(v))
 
 	l := viper.GetString("location")
+	if l == "" {
+		log.Fatalf("Please specify a server location")
+	}
 	server := viper.Sub(fmt.Sprintf("servers.%s", l))
 	if server == nil {
-		log.Fatalf("Server location not found: %s", l)
+		log.Fatalf("Server location not found: %s", string(l))
 	}
 	Client, err = api.NewClientWithResponses(server.GetString("baseUrl"), setRequestEditor)
 	if err != nil {
