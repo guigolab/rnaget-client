@@ -1,4 +1,8 @@
+location: crg
 servers:
+    local:
+        baseUrl: https://localhost:58852/rnaget
+        token: abcdefuvwxyz
     crg:
         baseUrl: https://genome.crg.cat/rnaget
         token: abcdefuvwxyz
