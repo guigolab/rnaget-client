@@ -154,6 +154,9 @@ func printBytes(payload []byte, l int, f *os.File, resp *http.Response) error {
 		} else {
 			fmt.Fprintf(w, "%s\n", payload)
 		}
+	default:
+		fmt.Fprintln(os.Stderr, "      Payload : ")
+		fmt.Fprintf(w, "%s\n", payload)
 	}
 	t := "matrix"
 	if l != 1 {
