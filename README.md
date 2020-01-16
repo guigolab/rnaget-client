@@ -2,7 +2,7 @@
 
 # GA4GH rnaget API demo client
 
-This is a demo client implementation for the GA4GH rnaget API. Please have a look at [this](https://github.com/ga4gh-rnaseq/schema/blob/master/TESTING.md) document for more information. The implementation consists in a command line application written in Go and covers the basic functionalities of the API.
+This is a demo client implementation for the GA4GH rnaget API. Please have a look at the [API schema](https://github.com/ga4gh-rnaseq/schema) for more information. The implementation consists in a command line application written in Go and covers the basic functionalities of the API.
 
 ## Installation instructions
 
@@ -17,7 +17,7 @@ Download the appropriate version for your platform from GitHub release. Once dow
 If you are familiar with Go and have the Go toolkit installed, the following command will install the master branch of the client into your `$GOPATH`:
 
 ```
-go get github.com/guigolab/rnaget-client/rnaget-client
+go get github.com/guigolab/rnaget-client
 ```
 
 ## Quickstart
@@ -26,25 +26,27 @@ To get the client usage run it without any argument:
 
 ```
 $ rnaget-client
-A demo client for the GA4gh rnaget API
+A demo client for the GA4GH RNAget API
 
 Usage:
   rnaget-client [command]
 
 Available Commands:
-  expression  Expression queries
+  continuous  Query continuous data
+  expressions Query expression data
   help        Help about any command
-  project     Project queries
-  study       Study queries
+  projects    Query projects
+  studies     Query studies
 
 Flags:
   -h, --help              help for rnaget-client
-  -l, --location string   Server location
+  -l, --location string   Server location (default "crg")
+  -V, --verbose count     Verbosity
 
 Use "rnaget-client [command] --help" for more information about a command.
 ```
 
-The client allows to run queries against the servers described in [this](https://github.com/ga4gh-rnaseq/schema/blob/master/TESTING.md) document. The default server is the `crg.cat` server. The target server can be changed using the `-l,--location` command line option. Allowed values for the option are `crg` and `caltech`, e.g.:
+The program takes server information from a configuration file. The file must be called `.rnaget-client.yml` and be stored in the current working directory. If no local configuration file is found the client loads the default configuration from this [remote file](https://github.com/guigolab/rnaget-client/blob/master/.rnaget-client.yml) (which can also be used as a template). The default target location can be specified in the config. A different server can be specified using the `-l,--location` command line option. e.g.:
 
 ```
 rnaget-client -l caltech ...
@@ -52,177 +54,196 @@ rnaget-client -l caltech ...
 
 ### Project queries
 
-The client allows searching for projects, e.g.:
+The client allows to get a list of projects, e.g.:
 
 ```
-$ rnaget-client project search
+$ rnaget-client projects
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
 [
   {
-    "description": "The Pancancer Analysis of Whole Genomes (PCAWG) study is an international collaboration to identify common patterns of mutation in more than 2,800 cancer whole genomes from the International Cancer Genome Consortium.",
-    "id": "E-MTAB-5200",
-    "name": "Pancancer Analysis of Whole Genomes",
-    "tags": [
-      "bulk",
-      "RNA-seq",
-      "human",
-      "cancer"
-    ],
-    "version": "1.0"
-  },
-  {
-    "description": "Single-Cell Analysis of Human Pancreas Reveals Transcriptional Signatures  of Aging and Somatic Mutation Patterns",
-    "id": "E-GEOD-81547",
-    "name": "Single cell transcriptome analysis of human pancreas",
-    "tags": [
-      "single-cell",
-      "RNA-seq",
-      "human",
-      "cancer"
-    ],
+    "description": "Test project object used by RNAget compliance testing suite.",
+    "id": "9c0eba51095d3939437e220db196e27b",
+    "name": "RNAgetTestProject0",
     "version": "1.0"
   }
 ]
-INFO[0000] Got 2 project(s)  
 ```
 
-The `search` command allows to include query filters, with the following command line options:
+The `projects` command allows to filter the query by version, using a command line flag. Please see the command help for more details.
+
+Projects can also be accessed by their identifier by passing it as the command argument, e.g.:
 
 ```
-  -t, --tags strings     Search for specific tags
-  -v, --version string   Search for a specific version
-``` 
-
-Projects can also be accessed by their identifier. The `get` command accepts the project id as its only argument, e.g.:
-
-```
-$ rnaget-client project get E-MTAB-5200
+$ rnaget-client projects 9c0eba51095d3939437e220db196e27b
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
 {
-  "description": "The Pancancer Analysis of Whole Genomes (PCAWG) study is an international collaboration to identify common patterns of mutation in more than 2,800 cancer whole genomes from the International Cancer Genome Consortium.",
-  "id": "E-MTAB-5200",
-  "name": "Pancancer Analysis of Whole Genomes",
-  "tags": [
-    "bulk",
-    "RNA-seq",
-    "human",
-    "cancer"
-  ],
+  "description": "Test project object used by RNAget compliance testing suite.",
+  "id": "9c0eba51095d3939437e220db196e27b",
+  "name": "RNAgetTestProject0",
   "version": "1.0"
 }
-INFO[0000] Got 1 project(s)  
+```
+
+Available additional query filters can be fetched with the following command:
+
+```
+$ rnaget-client projects filters
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
+[
+  {
+    "description": "The name of the project",
+    "fieldType": "string",
+    "filter": "name"
+  }
+]
 ```
 
 ### Study queries
 
-The client also allows searching for studies, e.g.:
+The client also allows getting a list of studies, e.g.:
 
 ```
-$ rnaget-client study search
+$ rnaget-client studies
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
 [
   {
-    "description": "PCAWG study",
-    "id": "E-MTAB-5200-ST0",
-    "name": "Pancancer Analysis of Whole Genomes",
-    "parentProjectID": "E-MTAB-5200",
-    "patientList": null,
-    "sampleList": null,
-    "tags": [
-      "bulk",
-      "RNA-seq",
-      "human",
-      "cancer"
-    ],
+    "description": "Test study object used by RNAget compliance testing suite.",
+    "id": "f3ba0b59bed0fa2f1030e7cb508324d1",
+    "name": "RNAgetTestStudy0",
+    "parentProjectID": "9c0eba51095d3939437e220db196e27b",
     "version": "1.0"
   }
 ]
-INFO[0000] Got 1 study(s)    
 ```
 
-The `search` command allows to include query filters, with the following command line options:
+The `studies` command also allows to filter the query by version, using a command line flag. Please see the command help for more details.
+
+Studies can be accessed by their identifier too, passing the id as the command argument, e.g.:
 
 ```
-  -t, --tags strings     Search for specific tags
-  -v, --version string   Search for a specific version
-``` 
-
-Studies can be accessed by their identifier too. The `get` command accepts the study id as its only argument, e.g.:
-
-Studies can be accessed by their identifier too, e.g.:
-
-```
-$ rnaget-client study get E-MTAB-5200-ST0
+$ rnaget-client studies f3ba0b59bed0fa2f1030e7cb508324d1
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
 {
-  "description": "PCAWG study",
-  "id": "E-MTAB-5200-ST0",
-  "name": "Pancancer Analysis of Whole Genomes",
-  "parentProjectID": "E-MTAB-5200",
-  "patientList": null,
-  "sampleList": null,
-  "tags": [
-    "bulk",
-    "RNA-seq",
-    "human",
-    "cancer"
-  ],
+  "description": "Test study object used by RNAget compliance testing suite.",
+  "id": "f3ba0b59bed0fa2f1030e7cb508324d1",
+  "name": "RNAgetTestStudy0",
+  "parentProjectID": "9c0eba51095d3939437e220db196e27b",
   "version": "1.0"
 }
-INFO[0000] Got 1 study(s)
+```
+
+Available additional query filters can be fetched with the following command:
+
+```
+$ rnaget-client studies filters 
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
+[
+  {
+    "description": "The name of the study",
+    "fieldType": "string",
+    "filter": "name"
+  }
+]
 ```
 
 ### Expression queries
 
-The expression data can also be searched, e.g.:
+Expression data queries can be performed using the `expressions` command of the client.
+
+The available expression formats can be looked up by using the following command:
 
 ```
-$ rnaget-client expression search
+$ rnaget-client expressions formats
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
+[
+  "tsv"
+]
+```
+
+The format is a required parameter for `bytes` and `ticket` queries and can be specified as a command line flag for each of the corresponding client commands. If the format is not specified on the command line, the first available format from the server is used. 
+
+`Bytes` queries return the actual content of the expression matrix. Tab separated content can be shown on the screen, while for `loom` content the user is required to specify an output file. An example query with `tsv` data from the `crg` server could be like the following:
+
+```
+$ rnaget-client expressions bytes
+         Host : genome.crg.cat
+       Status : 200 OK
+ Content-Type : text/tab-separated-values
+      Payload : 
+...
+```
+
+And one with `loom` data from the `caltech` server, saving the matrix to the file `matrix.loom`:
+
+```
+$ rnaget-client -l caltech expressions bytes -o matrix.loom
+         Host : felcat.caltech.edu
+       Status : 200 OK
+ Content-Type : application/vnd.loom
+```
+
+The `expressions` command allows to include several query filters and slicing options, by using command line flags. Please see the command help for more details.
+
+Expressions can also be accessed by their identifier too, passing the id as the command argument, e.g.:
+
+```
+$ rnaget-client expressions bytes 8beada7b93d5e55aa557138b39c6f930
+         Host : genome.crg.cat
+       Status : 200 OK
+ Content-Type : text/tab-separated-values
+      Payload :
+...
+```
+
+Available additional query filters can be fetched with the following command:
+
+```
+$ rnaget-client expressions filters 
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
 [
   {
-    "URL": "https://genome.crg.cat/rnaget/data/E-MTAB-5200.tpms.tsv",
-    "fileType": "tsv",
-    "id": "8beada7b93d5e55aa557138b39c6f930",
-    "studyID": "E-MTAB-5200-ST0",
-    "tags": [
-      "bulk",
-      "cancer",
-      "human",
-      "RNA-seq"
-    ]
+    "description": "The name of the expression",
+    "fieldType": "string",
+    "filter": "name"
   }
 ]
-INFO[0000] Got 1 file(s)  
 ```
 
-The expression `search` command allows to include several query filters and slicing options, with the following command line flags:
+`Ticket` queries have the same command line interface as `bytes` queries while returning a ticket for the expression data instead, e.g.:
 
 ```
-  -a, --feature-accession strings   Slice by feature accession
-  -f, --feature-id strings          Slice by feature id
-  -n, --feature-name strings        Slice by feature name
-  -p, --project-id string           Search for a specific project id
-  -i, --sample-id strings           Slice by sample id
-  -s, --study-id string             Search for a specific study id
-  -t, --tags strings                Search for specific tags
-  -v, --version string              Search for a specific version
-``` 
-
-And expressions can be accessed by their identifier too. The `get` command accepts the study id as its only argument, e.g.:
-
-```
-$ rnaget-client expression get 8beada7b93d5e55aa557138b39c6f930
+$ rnaget-client expressions ticket
+   Host : genome.crg.cat
+ Status : 200 OK
+Payload :
 {
-  "URL": "https://genome.crg.cat/rnaget/data/E-MTAB-5200.tpms.tsv",
   "fileType": "tsv",
-  "id": "8beada7b93d5e55aa557138b39c6f930",
-  "studyID": "E-MTAB-5200-ST0",
-  "tags": [
-    "bulk",
-    "cancer",
-    "human",
-    "RNA-seq"
-  ]
+  "headers": {
+    "Authorization": "Bearer abcdefuvwxyz"
+  },
+  "studyID": "f3ba0b59bed0fa2f1030e7cb508324d1",
+  "units": "TPM",
+  "url": "https://genome.crg.cat/rnaget/expressions/ac3e9279efd02f1c98de4ed3d335b98e/bytes",
+  "version": "1.0"
 }
-INFO[0000] Got 1 file(s) 
 ```
 
-#### Expression matrix slicing
+### Continuous queries
 
-> Work in progress
+Continuous data can also be queried via the `continuous` client command. The command looks very similar to the `expressions` one, just having few different command line flags used for slicing and filtering the response output. Please have a look a the command help for more details.
