@@ -2,7 +2,7 @@
 
 # GA4GH rnaget API demo client
 
-This is a demo client implementation for the GA4GH rnaget API. Please have a look at the [API schema](https://github.com/ga4gh-rnaseq/schema) for more information. The implementation consists in a command line application written in Go and covers the basic functionalities of the API.
+This is a demo client implementation for the GA4GH [RNAget API](https://github.com/ga4gh-rnaseq/schema). The implementation consists in a command line application written in Go and covers the basic functionalities of the API.
 
 ## Installation instructions
 
@@ -10,7 +10,7 @@ Use one of the following methods to install the client.
 
 ### Binary install
 
-Download the appropriate version for your platform from GitHub release. Once downloaded, the binary can be run from anywhere. Ideally, you should install it somewhere in your PATH for easy use.
+Download the appropriate version for your platform from the GitHub releases page. Once downloaded, the binary can be run from anywhere. Just move it to a folder inside your `PATH` for convenient use.
 
 ### Build and install from source
 
