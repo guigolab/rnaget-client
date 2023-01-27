@@ -71,20 +71,6 @@ func initViper() {
 	}
 }
 
-func setRequestEditor(c *api.Client) error {
-	l := viper.GetString("location")
-	server := viper.Sub(fmt.Sprintf("servers.%s", l))
-	c.RequestEditor = func(req *http.Request, ctx context.Context) error {
-		token := server.GetString("token")
-		if len(token) > 0 {
-			v := fmt.Sprintf("Bearer %s", token)
-			req.Header.Add("Authorization", v)
-		}
-		return nil
-	}
-	return nil
-}
-
 func getDefaultConfig() error {
 	viper.SetConfigType("yaml")
 
@@ -115,7 +101,15 @@ func getConfig(cmd *cobra.Command, args []string) {
 	if server == nil {
 		log.Fatalf("Server location not found: %s", string(l))
 	}
-	Client, err = api.NewClientWithResponses(server.GetString("baseUrl"), setRequestEditor)
+	reqEditor := func(ctx context.Context, req *http.Request) error {
+		token := server.GetString("token")
+		if len(token) > 0 {
+			v := fmt.Sprintf("Bearer %s", token)
+			req.Header.Add("Authorization", v)
+		}
+		return nil
+	}
+	Client, err = api.NewClientWithResponses(server.GetString("baseUrl"), api.WithRequestEditorFn(reqEditor))
 	if err != nil {
 		log.Fatal(err)
 	}
