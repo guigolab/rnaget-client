@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/guigolab/rnaget-client/pkg/api"
+	"github.com/guigolab/rnaget-client/pkg/version"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -37,6 +38,7 @@ var (
 		Use:              "rnaget-client",
 		Short:            "A demo client for the GA4GH RNAget API",
 		Long:             `A demo client for the GA4GH RNAget API`,
+		Version:          version.Get(),
 		PersistentPreRun: getConfig,
 		SilenceUsage:     true,
 		SilenceErrors:    true,
