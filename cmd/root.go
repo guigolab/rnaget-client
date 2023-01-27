@@ -169,12 +169,14 @@ func printBytes(payload []byte, l int, f *os.File, resp *http.Response) error {
 func printJSON(obj interface{}, l int, resp *http.Response) error {
 	fmt.Fprintln(os.Stderr, "   Host :", resp.Request.URL.Host)
 	fmt.Fprintln(os.Stderr, " Status :", resp.Status)
-	fmt.Fprintln(os.Stderr, "Payload :")
-	payload, err := json.MarshalIndent(obj, "", "  ")
-	if err != nil {
-		return err
+	if obj != nil {
+		payload, err := json.MarshalIndent(obj, "", "  ")
+		if err != nil {
+			return err
+		}
+		fmt.Fprintln(os.Stderr, "Payload :")
+		fmt.Printf("%s\n", payload)
 	}
-	fmt.Printf("%s\n", payload)
 	re := regexp.MustCompile(`(\[\])?\*(\[\])?api.`)
 	t := strings.ToLower(re.ReplaceAllString(fmt.Sprintf("%T", obj), ""))
 	if l != 1 {
@@ -182,6 +184,15 @@ func printJSON(obj interface{}, l int, resp *http.Response) error {
 	}
 	log.Infof("Got %d %s\n", l, t)
 	return nil
+}
+
+func printError(body []byte, resp *http.Response) error {
+	e := api.Error{}
+	err := json.Unmarshal(body, &e)
+	if err != nil {
+		return printBytes(body, 0, os.Stderr, resp)
+	}
+	return printJSON(e, 0, resp)
 }
 
 // Execute is the main function of the root command

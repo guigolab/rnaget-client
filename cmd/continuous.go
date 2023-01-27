@@ -37,22 +37,23 @@ func getContinuousBytesById(id string, params *api.GetContinuousFileByIdParams, 
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.Body
-		printBytes(payload, 1, w, resp.HTTPResponse)
+		return printBytes(payload, 1, w, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
 
-	return nil
 }
 
 func getContinuousTicketById(id string, params *api.GetContinuousTicketByIdParams) error {
@@ -64,22 +65,22 @@ func getContinuousTicketById(id string, params *api.GetContinuousTicketByIdParam
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getContinuousBytes(cmd *cobra.Command, args []string) error {
@@ -118,13 +119,7 @@ func getContinuousBytes(cmd *cobra.Command, args []string) error {
 		payload := resp.JSON501
 		return printJSON(payload, 1, resp.HTTPResponse)
 	default:
-		e := api.Error{}
-		err := json.Unmarshal(resp.Body, &e)
-		if err != nil {
-			return printBytes(resp.Body, 0, w, resp.HTTPResponse)
-
-		}
-		return printJSON(e, 0, resp.HTTPResponse)
+		return printError(resp.Body, resp.HTTPResponse)
 	}
 }
 
@@ -147,19 +142,19 @@ func getContinuousTicket(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getContinuousFormats(cmd *cobra.Command, args []string) error {
@@ -170,19 +165,19 @@ func getContinuousFormats(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getContinuousFilters(cmd *cobra.Command, args []string) error {
@@ -193,19 +188,19 @@ func getContinuousFilters(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getContinuousFirstSupportedFormat() (string, error) {

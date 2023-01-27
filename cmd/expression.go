@@ -43,22 +43,22 @@ func getExpressionBytesById(id string, params *api.GetExpressionFileByIdParams, 
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.Body
-		printBytes(payload, 1, w, resp.HTTPResponse)
+		return printBytes(payload, 1, w, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getExpressionTicketById(id string, params *api.GetExpressionTicketByIdParams) error {
@@ -70,22 +70,22 @@ func getExpressionTicketById(id string, params *api.GetExpressionTicketByIdParam
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getExpressionBytes(cmd *cobra.Command, args []string) error {
@@ -112,19 +112,19 @@ func getExpressionBytes(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.Body
-		printBytes(payload, 1, w, resp.HTTPResponse)
+		return printBytes(payload, 1, w, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getExpressionTicket(cmd *cobra.Command, args []string) error {
@@ -146,19 +146,19 @@ func getExpressionTicket(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getExpressionFormats(cmd *cobra.Command, args []string) error {
@@ -169,19 +169,19 @@ func getExpressionFormats(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getExpressionFilters(cmd *cobra.Command, args []string) error {
@@ -196,19 +196,19 @@ func getExpressionFilters(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getPayloadWriter(output string) *os.File {

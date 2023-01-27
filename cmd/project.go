@@ -31,22 +31,22 @@ func getProjectByID(id string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 404:
 		payload := resp.JSON404
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-
-	return nil
 }
 
 func getProjects(cmd *cobra.Command, args []string) error {
@@ -78,18 +78,19 @@ func getProjects(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, len(*payload), resp.HTTPResponse)
+		return printJSON(payload, len(*payload), resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 406:
 		payload := resp.JSON406
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 501:
 		payload := resp.JSON501
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-	return nil
 }
 
 func getProjectFilters(cmd *cobra.Command, args []string) error {
@@ -100,12 +101,13 @@ func getProjectFilters(cmd *cobra.Command, args []string) error {
 	switch resp.StatusCode() {
 	case 200:
 		payload := resp.JSON200
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
 	case 400:
 		payload := resp.JSON400
-		printJSON(payload, 1, resp.HTTPResponse)
+		return printJSON(payload, 1, resp.HTTPResponse)
+	default:
+		return printError(resp.Body, resp.HTTPResponse)
 	}
-	return nil
 }
 
 func setupProjectCommand() {
