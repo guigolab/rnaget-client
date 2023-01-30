@@ -32,24 +32,60 @@ Usage:
   rnaget-client [command]
 
 Available Commands:
-  continuous  Query continuous data
-  expressions Query expression data
-  help        Help about any command
-  projects    Query projects
-  studies     Query studies
+  continuous   Query continuous data
+  expressions  Query expression data
+  help         Help about any command
+  projects     Query projects
+  service-info Get service info
+  studies      Query studies
 
 Flags:
   -h, --help              help for rnaget-client
   -l, --location string   Server location (default "crg")
   -V, --verbose count     Verbosity
+      --version           version for rnaget-client
 
 Use "rnaget-client [command] --help" for more information about a command.
 ```
 
-The program takes server information from a configuration file. The file must be called `.rnaget-client.yml` and be stored in the current working directory. If no local configuration file is found the client loads the default configuration from this [remote file](https://github.com/guigolab/rnaget-client/blob/master/.rnaget-client.yml) (which can also be used as a template). The default target location can be specified in the config. A different server can be specified using the `-l,--location` command line option. e.g.:
+The program takes server information from a configuration file. The file must be called `.rnaget-client.yml` and be stored in the current working directory. If no local configuration file is found the client loads the default configuration corresponding to its version from the [GitHub repository](https://github.com/guigolab/rnaget-client) (which can also be used as a template). The default target location can be specified in the config. A different server can be specified using the `-l,--location` command line option. e.g.:
 
 ```
-rnaget-client -l caltech ...
+rnaget-client -l gtex ...
+```
+
+### Service-info query
+
+You can check the status of the remote server via the `service-info` API endpoint using the corresponding command, e.g.:
+
+```
+ $ rnaget-client -l gtex service-info
+   Host : gtexportal.org
+ Status : 200 OK
+Payload :
+{
+  "contactUrl": "https://gtexportal.org/home/contact",
+  "description": "This service provides access to GTEx public RNA-Seq data.",
+  "documentationUrl": "https://gtexportal.org/rnaget/docs",
+  "environment": "prod",
+  "id": "org.gtexportal.api.rnaget",
+  "name": "GTEx Portal RNAget",
+  "organization": {
+    "name": "GTEx Project",
+    "url": "https://gtexportal.org"
+  },
+  "supported": {
+    "continuous": false,
+    "expressions": true,
+    "projects": true,
+    "studies": true
+  },
+  "type": {
+    "artifact": "rnaget",
+    "version": "1.2.0"
+  },
+  "version": "1.0.0"
+}
 ```
 
 ### Project queries
