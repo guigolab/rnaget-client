@@ -19,11 +19,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	DefaultConfigURL = "https://raw.githubusercontent.com/guigolab/rnaget-client/master/.rnaget-client.yml"
-)
-
 var (
+	// URL of the default client config file with information on the available server instances
+	DefaultConfigURL = fmt.Sprintf("https://raw.githubusercontent.com/guigolab/rnaget-client/%s/.rnaget-client.yml", version.GetTag())
+
 	// Client is a shared GA4GHRnaget instance
 	Client      *api.ClientWithResponses
 	Ctx, Cancel = context.WithCancel(context.Background())
@@ -61,16 +60,6 @@ func initViper() {
 
 	viper.SetEnvPrefix("rnaget")
 	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			if err = getDefaultConfig(); err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			log.Fatal(err)
-		}
-	}
 }
 
 func getDefaultConfig() error {
@@ -94,6 +83,16 @@ func getConfig(cmd *cobra.Command, args []string) {
 		log.Fatal(err)
 	}
 	log.SetLevel(log.WarnLevel + log.Level(v))
+
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			if err = getDefaultConfig(); err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			log.Fatal(err)
+		}
+	}
 
 	l := viper.GetString("location")
 	if l == "" {
